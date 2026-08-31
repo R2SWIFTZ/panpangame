@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { upload } from "@vercel/blob/client";
-import { STATUS_LABEL, STATUS_ORDER, type Product, type ProductStatus } from "@/lib/types";
+import { CATEGORY_LABEL, CATEGORY_ORDER, STATUS_LABEL, STATUS_ORDER, type Product, type ProductCategory, type ProductStatus } from "@/lib/types";
 
 type Props = {
   product: Product | null; // null = สร้างใหม่
@@ -16,6 +16,7 @@ export default function ProductForm({ product, onClose, onSaved }: Props) {
   const [price, setPrice] = useState(product ? String(product.price) : "0");
   const [details, setDetails] = useState(product?.details.join("\n") ?? "");
   const [status, setStatus] = useState<ProductStatus>(product?.status ?? "available");
+  const [category, setCategory] = useState<ProductCategory>(product?.category ?? "recommended");
   const [images, setImages] = useState<string[]>(product?.images ?? []);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -52,6 +53,7 @@ export default function ProductForm({ product, onClose, onSaved }: Props) {
       details: details.split("\n").map((d) => d.trim()).filter(Boolean),
       images,
       status,
+      category,
     };
     const res = product
       ? await fetch(`/api/admin/products/${encodeURIComponent(product.ep)}`, {
@@ -110,20 +112,36 @@ export default function ProductForm({ product, onClose, onSaved }: Props) {
           </label>
         </div>
 
-        <label className="mt-4 block">
-          <span className="text-sm font-semibold">สถานะ</span>
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value as ProductStatus)}
-            className="mt-1 w-full rounded-xl border border-line bg-surface px-4 py-2.5 outline-none focus:border-pink"
-          >
-            {STATUS_ORDER.map((s) => (
-              <option key={s} value={s}>
-                {STATUS_LABEL[s]}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <label className="block">
+            <span className="text-sm font-semibold">สถานะ</span>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value as ProductStatus)}
+              className="mt-1 w-full rounded-xl border border-line bg-surface px-4 py-2.5 outline-none focus:border-pink"
+            >
+              {STATUS_ORDER.map((s) => (
+                <option key={s} value={s}>
+                  {STATUS_LABEL[s]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block">
+            <span className="text-sm font-semibold">หมวดไอดี</span>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value as ProductCategory)}
+              className="mt-1 w-full rounded-xl border border-line bg-surface px-4 py-2.5 outline-none focus:border-pink"
+            >
+              {CATEGORY_ORDER.map((c) => (
+                <option key={c} value={c}>
+                  {CATEGORY_LABEL[c]}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
 
         <label className="mt-4 block">
           <span className="text-sm font-semibold">รายละเอียด (บรรทัดละ 1 ข้อ)</span>

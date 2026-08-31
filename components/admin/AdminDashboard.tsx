@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { formatPrice, STATUS_LABEL, STATUS_ORDER, type Product, type ProductStatus } from "@/lib/types";
+import { CATEGORY_LABEL, formatPrice, STATUS_LABEL, STATUS_ORDER, type Product, type ProductStatus } from "@/lib/types";
 import StatusBadge from "@/components/StatusBadge";
 import ProductForm from "./ProductForm";
 
@@ -102,7 +102,7 @@ export default function AdminDashboard({ initialProducts }: { initialProducts: P
                 <StatusBadge status={p.status} />
               </div>
               <p className="text-sm text-muted">
-                {formatPrice(p.price)} · {p.images.length} รูป · {p.details.length} รายละเอียด
+                {formatPrice(p.price)} · {CATEGORY_LABEL[p.category]} · {p.images.length} รูป · {p.details.length} รายละเอียด
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">

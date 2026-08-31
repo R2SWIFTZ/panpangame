@@ -1,4 +1,4 @@
-import { STATUS_ORDER, type Product, type ProductStatus } from "./types";
+import { CATEGORY_ORDER, STATUS_ORDER, type Product, type ProductCategory, type ProductStatus } from "./types";
 
 const MAX_DETAILS = 30;
 const MAX_IMAGES = 30;
@@ -10,6 +10,7 @@ export type ProductInput = {
   details: string[];
   images: string[];
   status: ProductStatus;
+  category: ProductCategory;
 };
 
 export function parseProductInput(body: unknown): ProductInput | string {
@@ -38,8 +39,11 @@ export function parseProductInput(body: unknown): ProductInput | string {
     : [];
 
   const status = STATUS_ORDER.includes(b.status as ProductStatus) ? (b.status as ProductStatus) : "available";
+  const category = CATEGORY_ORDER.includes(b.category as ProductCategory)
+    ? (b.category as ProductCategory)
+    : "recommended";
 
-  return { ep, price: Math.round(price), details, images, status };
+  return { ep, price: Math.round(price), details, images, status, category };
 }
 
 export function touchProduct(input: ProductInput, existing?: Product): Product {

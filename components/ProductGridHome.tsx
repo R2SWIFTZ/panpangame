@@ -4,14 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { formatPrice, STATUS_LABEL, STATUS_ORDER, type Product, type ProductStatus } from "@/lib/types";
+import { CATEGORY_LABEL, CATEGORY_ORDER, formatPrice, type Product, type ProductCategory } from "@/lib/types";
 import StatusBadge from "./StatusBadge";
 
-type Filter = ProductStatus | "all";
+type Filter = ProductCategory | "all";
 
 export default function ProductGridHome({ products }: { products: Product[] }) {
   const [filter, setFilter] = useState<Filter>("all");
-  const shown = filter === "all" ? products : products.filter((p) => p.status === filter);
+  const shown = filter === "all" ? products : products.filter((p) => p.category === filter);
 
   return (
     <section id="products" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
@@ -22,8 +22,8 @@ export default function ProductGridHome({ products }: { products: Product[] }) {
           </h2>
           <p className="mt-1 text-sm text-muted">กดที่รหัสเพื่อดูรูปและรายละเอียดทั้งหมด</p>
         </div>
-        <div role="tablist" aria-label="กรองตามสถานะ" className="flex flex-wrap gap-2">
-          {(["all", ...STATUS_ORDER] as Filter[]).map((s) => (
+        <div role="tablist" aria-label="กรองตามหมวด" className="flex flex-wrap gap-2">
+          {(["all", ...CATEGORY_ORDER] as Filter[]).map((s) => (
             <button
               key={s}
               role="tab"
@@ -35,7 +35,7 @@ export default function ProductGridHome({ products }: { products: Product[] }) {
                   : "border-line bg-surface text-muted hover:border-pink/40 hover:text-ink"
               }`}
             >
-              {s === "all" ? "ทั้งหมด" : STATUS_LABEL[s]}
+              {s === "all" ? "ทั้งหมด" : CATEGORY_LABEL[s]}
             </button>
           ))}
         </div>

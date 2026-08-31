@@ -12,7 +12,8 @@ export async function readProducts(): Promise<Product[]> {
     const res = await fetch(`${meta.url}?v=${Date.now()}`, { cache: "no-store" });
     if (!res.ok) return [];
     const data = (await res.json()) as Product[];
-    return Array.isArray(data) ? data : [];
+    if (!Array.isArray(data)) return [];
+    return data.map((p) => ({ ...p, category: p.category ?? "recommended" }));
   } catch {
     // ยังไม่มีไฟล์ข้อมูล (ร้านใหม่) — เริ่มจากรายการว่าง
     return [];
