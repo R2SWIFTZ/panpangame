@@ -18,10 +18,10 @@ const prompt = Prompt({
 });
 
 export const metadata: Metadata = {
-  title: `${siteConfig.name} — ร้านขายไอดี Free Fire ปลอดภัย ส่งไว`,
+  title: `${siteConfig.name} — ร้านขายรหัส Free Fire`,
   description: siteConfig.tagline,
   openGraph: {
-    title: `${siteConfig.name} — ร้านขายไอดี Free Fire`,
+    title: `${siteConfig.name} — ร้านขายรหัส Free Fire`,
     description: siteConfig.tagline,
     locale: "th_TH",
     type: "website",

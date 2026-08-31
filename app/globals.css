@@ -1,25 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  --cream: #fff3f9;
-  --blush: #ffdff0;
-  --pink: #ff3d9a;
-  --hotpink: #e7007f;
-  --plum: #3a0f2e;
-  --plum-soft: #7a4368;
-  --butter: #ffd645;
-  --mint: #2ec99a;
+  --bg: #0c0a0e;
+  --surface: #14111a;
+  --card: #191420;
+  --line: rgba(255, 255, 255, 0.08);
+  --pink: #ff4d9d;
+  --pink-strong: #ff2e8b;
+  --pink-soft: #ffa8cf;
+  --text: #f7f2f7;
+  --muted: #a89aa7;
+  --mint: #3ddca3;
+  --amber: #ffc14d;
+  --sky: #6fb7ff;
+  --rose: #ff6b81;
 }
 
 @theme inline {
-  --color-cream: var(--cream);
-  --color-blush: var(--blush);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-line: var(--line);
   --color-pink: var(--pink);
-  --color-hotpink: var(--hotpink);
-  --color-plum: var(--plum);
-  --color-plum-soft: var(--plum-soft);
-  --color-butter: var(--butter);
+  --color-pink-strong: var(--pink-strong);
+  --color-pink-soft: var(--pink-soft);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
   --color-mint: var(--mint);
+  --color-amber: var(--amber);
+  --color-sky: var(--sky);
+  --color-rose: var(--rose);
   --font-display: var(--font-chonburi), serif;
   --font-body: var(--font-prompt), sans-serif;
 }
@@ -29,8 +39,8 @@ html {
 }
 
 body {
-  background: var(--cream);
-  color: var(--plum);
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--font-prompt), sans-serif;
 }
 
@@ -43,30 +53,18 @@ body {
   font-family: var(--font-chonburi), serif;
 }
 
-/* จุดลายพื้นหลังแบบขนมหวาน */
-.candy-dots {
-  background-image: radial-gradient(rgba(255, 61, 154, 0.14) 1.5px, transparent 1.5px);
-  background-size: 22px 22px;
+/* แสงชมพูจางๆ บนพื้นดำ */
+.glow-pink {
+  box-shadow: 0 0 24px rgba(255, 77, 157, 0.25);
 }
 
-/* แถบตัววิ่ง */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-.animate-marquee {
-  animation: marquee 22s linear infinite;
-}
-
-/* เงาการ์ตูนขอบชัด */
-.sticker-shadow {
-  box-shadow: 4px 4px 0 0 var(--plum);
-}
-.sticker-shadow-pink {
-  box-shadow: 4px 4px 0 0 var(--hotpink);
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 77, 157, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 77, 157, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-marquee { animation: none; }
   html { scroll-behavior: auto; }
 }

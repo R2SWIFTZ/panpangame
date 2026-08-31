@@ -1,25 +1,24 @@
-import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import TrustBadges from "@/components/TrustBadges";
-import ProductGrid from "@/components/ProductGrid";
-import HowToOrder from "@/components/HowToOrder";
-import Reviews from "@/components/Reviews";
-import FAQ from "@/components/FAQ";
-import Contact from "@/components/Contact";
-import Footer from "@/components/Footer";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
+import HomeHero from "@/components/HomeHero";
+import ProductGridHome from "@/components/ProductGridHome";
+import HowTo from "@/components/HowTo";
+import ContactSection from "@/components/ContactSection";
+import { readProducts } from "@/lib/store";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const products = await readProducts();
+  const availableCount = products.filter((p) => p.status === "available").length;
   return (
     <main>
-      <Navbar />
-      <Hero />
-      <TrustBadges />
-      <ProductGrid />
-      <HowToOrder />
-      <Reviews />
-      <FAQ />
-      <Contact />
-      <Footer />
+      <SiteHeader />
+      <HomeHero availableCount={availableCount} />
+      <ProductGridHome products={products} />
+      <HowTo />
+      <ContactSection />
+      <SiteFooter />
     </main>
   );
 }
