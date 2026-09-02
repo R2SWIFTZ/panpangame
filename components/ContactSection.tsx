@@ -13,7 +13,7 @@ export default function ContactSection() {
         className="overflow-hidden rounded-3xl border border-pink/25 bg-gradient-to-br from-card to-pink/10 p-8 text-center sm:p-12"
       >
         <h2 className="text-2xl font-bold sm:text-3xl">
-          ติดต่อร้าน / <span className="text-pink">สอบถามก่อนซื้อ</span>
+          ติดต่อร้าน / <span className="whitespace-nowrap text-pink">สอบถามก่อนซื้อ</span>
         </h2>
         <p className="mx-auto mt-3 max-w-md text-muted">
           เช็กสถานะรหัส ขอรูปเพิ่ม หรือให้แอดมินช่วยเลือก ทักได้เลย {siteConfig.openHours}
