@@ -27,17 +27,6 @@ export default function ContactSection() {
           >
             💬 LINE {siteConfig.lineId}
           </a>
-          {siteConfig.facebookPages.map((f) => (
-            <a
-              key={f.url}
-              href={f.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-xl border border-line bg-surface px-5 py-3 text-sm font-semibold text-ink transition hover:border-sky/50"
-            >
-              {f.label}
-            </a>
-          ))}
         </div>
       </motion.div>
     </section>

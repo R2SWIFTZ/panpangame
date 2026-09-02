@@ -12,11 +12,6 @@ export default function SiteFooter() {
           <a href={siteConfig.lineUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-mint hover:underline">
             LINE {siteConfig.lineId}
           </a>
-          {siteConfig.facebookPages.map((f) => (
-            <a key={f.url} href={f.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-sky hover:underline">
-              {f.label}
-            </a>
-          ))}
         </div>
         <p className="mt-2 text-xs text-muted/60">
           © {new Date().getFullYear()} {siteConfig.name} — เว็บไซต์ตัวอย่าง (Demo)
