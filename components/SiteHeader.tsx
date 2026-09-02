@@ -8,7 +8,7 @@ export default function SiteHeader() {
         <Link href="/" className="flex items-center gap-2.5">
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-pink text-lg glow-pink">🎮</span>
           <span className="font-display text-xl text-pink">
-            PanPan<span className="text-ink">Game</span>
+            panpan<span className="text-ink">game</span>
           </span>
           <span className="rounded-md border border-pink/40 px-1.5 py-0.5 text-[10px] font-bold text-pink-soft">
             DEMO

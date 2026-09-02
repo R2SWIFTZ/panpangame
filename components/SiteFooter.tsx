@@ -5,7 +5,7 @@ export default function SiteFooter() {
     <footer className="border-t border-line bg-surface">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 py-10 text-center">
         <p className="font-display text-xl text-pink">
-          PanPan<span className="text-ink">Game</span>
+          panpan<span className="text-ink">game</span>
         </p>
         <p className="max-w-md text-sm text-muted">{siteConfig.tagline}</p>
         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1 text-sm">

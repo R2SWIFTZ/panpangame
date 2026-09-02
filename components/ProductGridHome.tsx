@@ -44,7 +44,7 @@ export default function ProductGridHome({ products }: { products: Product[] }) {
       {shown.length === 0 ? (
         <p className="mt-14 text-center text-muted">ยังไม่มีรหัสในหมวดนี้ — ทัก LINE สอบถามได้เลย</p>
       ) : (
-        <motion.div layout className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div layout className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">
             {shown.map((p) => {
               const sold = p.status === "sold";
@@ -52,6 +52,7 @@ export default function ProductGridHome({ products }: { products: Product[] }) {
                 <motion.div
                   key={p.ep}
                   layout
+                  className="min-w-0"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}

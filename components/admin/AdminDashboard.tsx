@@ -63,7 +63,7 @@ export default function AdminDashboard({ initialProducts }: { initialProducts: P
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">
-            🛠️ หลังบ้าน <span className="text-pink">PanPanGame</span>
+            🛠️ หลังบ้าน <span className="text-pink">panpangame</span>
           </h1>
           <p className="text-sm text-muted">จัดการรหัสทั้งหมด {products.length} รายการ</p>
         </div>

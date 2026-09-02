@@ -31,7 +31,7 @@ export default function AdminLogin() {
     <main className="grid min-h-screen place-items-center bg-grid px-4">
       <form onSubmit={submit} className="w-full max-w-sm rounded-3xl border border-line bg-card p-8">
         <p className="text-center font-display text-2xl text-pink">
-          PanPan<span className="text-ink">Game</span>
+          panpan<span className="text-ink">game</span>
         </p>
         <p className="mt-1 text-center text-sm text-muted">หลังบ้านสำหรับแอดมิน</p>
         <label className="mt-6 block">

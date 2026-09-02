@@ -30,7 +30,7 @@
   --color-amber: var(--amber);
   --color-sky: var(--sky);
   --color-rose: var(--rose);
-  --font-display: var(--font-chonburi), serif;
+  --font-display: var(--font-anuphan), sans-serif;
   --font-body: var(--font-prompt), sans-serif;
 }
 
@@ -50,7 +50,9 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-chonburi), serif;
+  font-family: var(--font-anuphan), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 /* แสงชมพูจางๆ บนพื้นดำ */

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { Chonburi, Prompt } from "next/font/google";
+import { Anuphan, Prompt } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/lib/config";
 
-const chonburi = Chonburi({
-  variable: "--font-chonburi",
-  weight: "400",
+// Clean, low-contrast Thai sans for the big type moments (hero, wordmark) —
+// deliberately not a display serif; matches the applesupps.me feel.
+const anuphan = Anuphan({
+  variable: "--font-anuphan",
+  weight: ["500", "600", "700"],
   subsets: ["thai", "latin"],
   display: "swap",
 });
@@ -30,7 +32,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="th" className={`${chonburi.variable} ${prompt.variable} antialiased`}>
+    <html lang="th" className={`${anuphan.variable} ${prompt.variable} antialiased`}>
       <body className="min-h-screen">{children}</body>
     </html>
   );
