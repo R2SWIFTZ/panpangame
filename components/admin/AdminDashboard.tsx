@@ -4,11 +4,18 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Reorder } from "framer-motion";
-import type { Product, ProductStatus } from "@/lib/types";
+import type { Product, ProductCategory, ProductStatus } from "@/lib/types";
 import ProductForm from "./ProductForm";
 import ProductRow from "./ProductRow";
+import CategoryOrderPanel from "./CategoryOrderPanel";
 
-export default function AdminDashboard({ initialProducts }: { initialProducts: Product[] }) {
+export default function AdminDashboard({
+  initialProducts,
+  initialCategoryOrder,
+}: {
+  initialProducts: Product[];
+  initialCategoryOrder: ProductCategory[];
+}) {
   const router = useRouter();
   const [products, setProducts] = useState(initialProducts);
   // Latest order for the drag-end handler — Reorder fires onReorder on every
@@ -123,6 +130,8 @@ export default function AdminDashboard({ initialProducts }: { initialProducts: P
         ))}
       </Reorder.Group>
       {products.length === 0 && <p className="py-10 text-center text-muted">ยังไม่มีรหัส กด &ldquo;เพิ่มรหัสใหม่&rdquo; ได้เลย</p>}
+
+      <CategoryOrderPanel initialOrder={initialCategoryOrder} />
 
       {editing && (
         <ProductForm

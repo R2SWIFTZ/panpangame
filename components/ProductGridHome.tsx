@@ -4,12 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { CATEGORY_LABEL, CATEGORY_ORDER, formatPrice, type Product, type ProductCategory } from "@/lib/types";
+import { CATEGORY_LABEL, formatPrice, type Product, type ProductCategory } from "@/lib/types";
 import StatusBadge from "./StatusBadge";
 
 type Filter = ProductCategory | "all";
 
-export default function ProductGridHome({ products }: { products: Product[] }) {
+export default function ProductGridHome({
+  products,
+  categoryOrder,
+}: {
+  products: Product[];
+  categoryOrder: ProductCategory[];
+}) {
   const [filter, setFilter] = useState<Filter>("all");
   const shown = filter === "all" ? products : products.filter((p) => p.category === filter);
 
@@ -23,7 +29,7 @@ export default function ProductGridHome({ products }: { products: Product[] }) {
           <p className="mt-1 text-sm text-muted">กดที่รหัสเพื่อดูรูปและรายละเอียดทั้งหมด</p>
         </div>
         <div role="tablist" aria-label="กรองตามหมวด" className="flex flex-wrap gap-2">
-          {(["all", ...CATEGORY_ORDER] as Filter[]).map((s) => (
+          {(["all", ...categoryOrder] as Filter[]).map((s) => (
             <button
               key={s}
               role="tab"
