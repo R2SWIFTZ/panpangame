@@ -1,16 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CATEGORY_LABEL, formatPrice, STATUS_LABEL, STATUS_ORDER, type Product, type ProductStatus } from "@/lib/types";
-import StatusBadge from "@/components/StatusBadge";
+import { Reorder } from "framer-motion";
+import type { Product, ProductStatus } from "@/lib/types";
 import ProductForm from "./ProductForm";
+import ProductRow from "./ProductRow";
 
 export default function AdminDashboard({ initialProducts }: { initialProducts: Product[] }) {
   const router = useRouter();
   const [products, setProducts] = useState(initialProducts);
+  // Latest order for the drag-end handler — Reorder fires onReorder on every
+  // hover-swap, but we only persist once the grip is released.
+  const orderRef = useRef(products);
+  useEffect(() => {
+    orderRef.current = products;
+  }, [products]);
   const [editing, setEditing] = useState<Product | "new" | null>(null);
   const [busyEp, setBusyEp] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -52,6 +58,19 @@ export default function AdminDashboard({ initialProducts }: { initialProducts: P
     }
   };
 
+  const persistOrder = async () => {
+    setError("");
+    const res = await fetch("/api/admin/products", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ order: orderRef.current.map((p) => p.ep) }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error ?? "บันทึกลำดับไม่สำเร็จ");
+    }
+  };
+
   const onSaved = (saved: Product, previousEp?: string) => {
     setProducts((prev) =>
       previousEp ? prev.map((p) => (p.ep === previousEp ? saved : p)) : [saved, ...prev]
@@ -87,57 +106,23 @@ export default function AdminDashboard({ initialProducts }: { initialProducts: P
         ＋ เพิ่มรหัสใหม่
       </button>
 
-      <div className="mt-6 space-y-3">
+      {products.length > 0 && (
+        <p className="mt-6 text-xs text-muted">ลากที่ขีดสามขีดเพื่อสลับลำดับ — ลำดับนี้คือลำดับที่แสดงบนหน้าเว็บ</p>
+      )}
+      <Reorder.Group axis="y" values={products} onReorder={setProducts} className="mt-3 space-y-3">
         {products.map((p) => (
-          <div key={p.ep} className="flex flex-wrap items-center gap-4 rounded-2xl border border-line bg-card p-4">
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-surface">
-              {p.images[0] ? (
-                <Image src={p.images[0]} alt="" fill sizes="64px" className="object-cover" />
-              ) : (
-                <div className="grid h-full place-items-center text-2xl">🔥</div>
-              )}
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="font-bold tracking-wide">{p.ep}</p>
-                <StatusBadge status={p.status} />
-              </div>
-              <p className="text-sm text-muted">
-                {formatPrice(p.price)} · {CATEGORY_LABEL[p.category]} · {p.images.length} รูป · {p.details.length} รายละเอียด
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <select
-                value={p.status}
-                disabled={busyEp === p.ep}
-                onChange={(e) => changeStatus(p, e.target.value as ProductStatus)}
-                aria-label={`เปลี่ยนสถานะ ${p.ep}`}
-                className="rounded-xl border border-line bg-surface px-3 py-2 text-sm font-semibold outline-none focus:border-pink"
-              >
-                {STATUS_ORDER.map((s) => (
-                  <option key={s} value={s}>
-                    {STATUS_LABEL[s]}
-                  </option>
-                ))}
-              </select>
-              <button
-                onClick={() => setEditing(p)}
-                className="rounded-xl border border-line bg-surface px-4 py-2 text-sm font-semibold hover:border-pink/50"
-              >
-                แก้ไข
-              </button>
-              <button
-                onClick={() => remove(p)}
-                disabled={busyEp === p.ep}
-                className="rounded-xl border border-line bg-surface px-3 py-2 text-sm font-semibold text-rose hover:border-rose/50 disabled:opacity-50"
-              >
-                ลบ
-              </button>
-            </div>
-          </div>
+          <ProductRow
+            key={p.ep}
+            product={p}
+            busy={busyEp === p.ep}
+            onStatus={(status) => changeStatus(p, status)}
+            onEdit={() => setEditing(p)}
+            onRemove={() => remove(p)}
+            onDropped={persistOrder}
+          />
         ))}
-        {products.length === 0 && <p className="py-10 text-center text-muted">ยังไม่มีรหัส กด &ldquo;เพิ่มรหัสใหม่&rdquo; ได้เลย</p>}
-      </div>
+      </Reorder.Group>
+      {products.length === 0 && <p className="py-10 text-center text-muted">ยังไม่มีรหัส กด &ldquo;เพิ่มรหัสใหม่&rdquo; ได้เลย</p>}
 
       {editing && (
         <ProductForm
