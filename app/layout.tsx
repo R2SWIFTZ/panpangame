@@ -19,14 +19,27 @@ const prompt = Prompt({
   display: "swap",
 });
 
+const SITE_TITLE = `${siteConfig.name} - ซื้อขายรหัส Free Fire`;
+
 export const metadata: Metadata = {
-  title: `${siteConfig.name} — ร้านขายรหัส Free Fire`,
+  // Absolute base so og:image resolves for LINE / Messenger / iMessage scrapers.
+  metadataBase: new URL(siteConfig.url),
+  title: SITE_TITLE,
   description: siteConfig.tagline,
   openGraph: {
-    title: `${siteConfig.name} — ร้านขายรหัส Free Fire`,
+    title: SITE_TITLE,
     description: siteConfig.tagline,
+    siteName: siteConfig.name,
+    url: "/",
     locale: "th_TH",
     type: "website",
+    images: [{ url: "/og.jpg", width: 1200, height: 1200, alt: SITE_TITLE }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: siteConfig.tagline,
+    images: ["/og.jpg"],
   },
 };
 

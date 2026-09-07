@@ -4,6 +4,7 @@ const TAGLINE_PARTS = ["ร้านขายรหัส Free Fire", "ปลอ
 
 export const siteConfig = {
   name: "panpangame",
+  url: "https://panpangame.vercel.app",
   taglineParts: TAGLINE_PARTS,
   tagline: TAGLINE_PARTS.join(" "),
   lineUrl: "https://line.me/R/ti/p/@pandazone",
