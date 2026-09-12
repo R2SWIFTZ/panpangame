@@ -1,6 +1,6 @@
 # panpangame — project handoff
 
-Updated 2026-09-05. Written for the next Claude session (or a human) picking this
+Updated 2026-09-12. Written for the next Claude session (or a human) picking this
 project up cold. Read this top to bottom before touching code.
 
 ## What it is
@@ -13,7 +13,10 @@ carries a "DEMO" badge. Owner is the operator (Thai speaker); all UI copy is Tha
 - Live: https://panpangame.vercel.app (Vercel project `panpangame`, team
   `r2swiftzs-projects`, `.vercel/project.json` is checked in)
 - Repo: https://github.com/R2SWIFTZ/panpangame — `main` auto-deploys on push,
-  a deploy is typically live within ~30 s
+  a deploy is typically live within ~30 s. ⚠️ The GitHub→Vercel hook has
+  silently NOT fired once (2026-09-07): if `vercel ls panpangame` shows no new
+  deployment a minute after the push, run `vercel --prod --yes` from the repo
+  (`.vercel/project.json` links it) — same result, no config change needed.
 - Local path: `~/panpangame`
 
 ## Stack
@@ -37,7 +40,8 @@ Fonts (`app/layout.tsx`, next/font/google, Thai+Latin subsets): **Anuphan**
 
 ```
 app/
-  layout.tsx            fonts, metadata (title uses siteConfig.name)
+  layout.tsx            fonts, metadata: title "panpangame - ซื้อขายรหัส Free Fire",
+                        metadataBase = siteConfig.url, og:image + twitter card → /og.jpg
   page.tsx              home: reads products + category order, force-dynamic
   id/[ep]/page.tsx      product detail (Gallery, details list, DetailActions)
   admin/page.tsx        gate: isAdminRequest() ? AdminDashboard : AdminLogin
@@ -51,12 +55,13 @@ components/
   Gallery (single/grid modes) · DetailActions (copy summary → LINE) · StatusBadge
   admin/AdminLogin · AdminDashboard · ProductRow · ProductForm · CategoryOrderPanel
 lib/
-  config.ts   siteConfig: name "panpangame", taglineParts, LINE url/id, openHours
+  config.ts   siteConfig: name "panpangame", url, taglineParts, LINE url/id, openHours
   types.ts    Product, ProductStatus, ProductCategory + LABEL/ORDER tables
   store.ts    blob read/write for products + category order
   validate.ts parseProductInput (limits below) + touchProduct (timestamps)
   auth.ts     HMAC session cookie
 scripts/seed.mjs   one-off: upload image folders + write initial products.json
+public/og.jpg      link-preview image (the pink shop poster, 1200x1200, ~220 KB)
 ```
 
 ## Data model and storage
@@ -162,6 +167,14 @@ Blob reads still work with the real token, so the dashboard shows real products.
   them up. `browser_run_code_unsafe` takes `async (page) => {…}`.
 - Facebook links were removed on operator request (2026-09-02) — LINE is the
   only contact channel; do not re-add `facebookPages`.
+- **Link previews.** Without an explicit `og:image` chat apps scraped the first
+  product photo. `public/og.jpg` + `metadataBase` fixed it (2026-09-07). LINE /
+  Messenger / Instagram cache previews for hours–days; to force a refresh share
+  the URL with a throwaway query (`/?v=2`). To change the preview image,
+  replace `public/og.jpg` (keep it square, ≤ ~300 KB) — nothing else to edit.
+- The operator once asked to change "games" → "game"; no such string exists
+  anywhere (code, prod HTML, repo description, Vercel). Assume a stale chat
+  preview unless they show where it appears.
 
 ## Timeline
 
@@ -176,6 +189,8 @@ Blob reads still work with the real token, so the dashboard shows real products.
 | 09-02 | `f96deec` | Thai phrase-level nowrap for footer tagline / contact heading |
 | 09-03 | `a6af8f8` | drag-to-reorder products + mobile-first admin rows (44 px targets) |
 | 09-03 | `007fecd` | admin panel to reorder the public category chips |
+| 09-05 | `2df641c` | this handoff |
+| 09-07 | `bba493a` | og.jpg link-preview image, share title "panpangame - ซื้อขายรหัส Free Fire" (deployed via CLI — GitHub hook did not fire) |
 
 ## Open / ideas not started
 
