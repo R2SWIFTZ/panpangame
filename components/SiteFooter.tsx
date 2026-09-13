@@ -20,7 +20,7 @@ export default function SiteFooter() {
           </a>
         </div>
         <p className="mt-2 text-xs text-muted/60">
-          © {new Date().getFullYear()} {siteConfig.name} — เว็บไซต์ตัวอย่าง (Demo)
+          © {new Date().getFullYear()} {siteConfig.name}
         </p>
       </div>
     </footer>

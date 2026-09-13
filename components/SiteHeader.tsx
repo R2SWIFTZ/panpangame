@@ -10,9 +10,6 @@ export default function SiteHeader() {
           <span className="font-display text-xl text-pink">
             panpan<span className="text-ink">game</span>
           </span>
-          <span className="rounded-md border border-pink/40 px-1.5 py-0.5 text-[10px] font-bold text-pink-soft">
-            DEMO
-          </span>
         </Link>
         <div className="flex items-center gap-2">
           <Link
