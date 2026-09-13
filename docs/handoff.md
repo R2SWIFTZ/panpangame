@@ -1,6 +1,6 @@
 # panpangame — project handoff
 
-Updated 2026-09-12. Written for the next Claude session (or a human) picking this
+Updated 2026-09-13. Written for the next Claude session (or a human) picking this
 project up cold. Read this top to bottom before touching code.
 
 ## What it is
@@ -10,14 +10,43 @@ is no checkout — the customer browses, copies an ID's details, and messages th
 admin on **LINE @pandazone** to buy. Dark theme with a hot-pink accent, header
 carries a "DEMO" badge. Owner is the operator (Thai speaker); all UI copy is Thai.
 
-- Live: https://panpangame.vercel.app (Vercel project `panpangame`, team
-  `r2swiftzs-projects`, `.vercel/project.json` is checked in)
+- Live: **https://panpangame.com** (custom domain since 2026-09-13; the old
+  https://panpangame.vercel.app still serves and is what Vercel calls the
+  project — `panpangame`, team `r2swiftzs-projects`, `.vercel/project.json`
+  is checked in). `www.panpangame.com` → 308 → apex; http → 308 → https.
 - Repo: https://github.com/R2SWIFTZ/panpangame — `main` auto-deploys on push,
   a deploy is typically live within ~30 s. ⚠️ The GitHub→Vercel hook has
   silently NOT fired once (2026-09-07): if `vercel ls panpangame` shows no new
   deployment a minute after the push, run `vercel --prod --yes` from the repo
   (`.vercel/project.json` links it) — same result, no config change needed.
 - Local path: `~/panpangame`
+
+## Domain / DNS (Cloudflare → Vercel)
+
+Registrar + DNS = **Cloudflare**, zone `panpangame.com` (zone id
+`f9be57a574c8216da39e376670fbb34e`, account `325346038d298bee7af0a29ee7323a1f`,
+NS amos/fiona.ns.cloudflare.com). Hosting stays on Vercel. Records:
+
+| Type  | Name | Content                 | Proxy    |
+|-------|------|-------------------------|----------|
+| A     | @    | 76.76.21.21             | DNS only |
+| CNAME | www  | cname.vercel-dns.com    | DNS only |
+
+Zone settings: SSL mode **Full**, Always Use HTTPS **on**. Records are
+deliberately **DNS only (grey cloud)** so Vercel terminates TLS and issues the
+cert itself; turning the orange proxy on would double-proxy and can break
+Vercel's cert renewal — leave it off unless there is a specific reason. The
+www→apex redirect lives on the Vercel side (project domain `redirect` field,
+308), not in Cloudflare rules.
+
+How Claude talks to Cloudflare: the official plugin (`claude plugin install
+cloudflare@cloudflare`) exposes an `execute` tool that calls the Cloudflare API
+with the operator's OAuth grant — that is how the records above were created.
+If the tool set shows only `authenticate`, run it, hand the operator the link,
+and paste the callback URL into `complete_authentication` (the localhost
+redirect page never loads; the URL in the address bar is what matters).
+`wrangler` is also installed and logged in, but its OAuth token cannot edit
+DNS (zone:read only) — use the plugin for DNS.
 
 ## Stack
 
@@ -191,6 +220,7 @@ Blob reads still work with the real token, so the dashboard shows real products.
 | 09-03 | `007fecd` | admin panel to reorder the public category chips |
 | 09-05 | `2df641c` | this handoff |
 | 09-07 | `bba493a` | og.jpg link-preview image, share title "panpangame - ซื้อขายรหัส Free Fire" (deployed via CLI — GitHub hook did not fire) |
+| 09-13 | `78089ec` | custom domain panpangame.com live (Cloudflare DNS → Vercel, www + http redirects), canonical URL switched |
 
 ## Open / ideas not started
 
