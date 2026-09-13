@@ -7,8 +7,9 @@ project up cold. Read this top to bottom before touching code.
 
 A Thai-language shop that lists **Free Fire game IDs** (accounts) for sale. There
 is no checkout — the customer browses, copies an ID's details, and messages the
-admin on **LINE @pandazone** to buy. Dark theme with a hot-pink accent, header
-carries a "DEMO" badge. Owner is the operator (Thai speaker); all UI copy is Thai.
+admin on **LINE @pandazone** to buy. Dark theme with a hot-pink accent. Owner is
+the operator (Thai speaker); all UI copy is Thai. **Production, real customers**
+since 2026-09-13 (the DEMO badge and demo footer note were removed then).
 
 - Live: **https://panpangame.com** (custom domain since 2026-09-13; the old
   https://panpangame.vercel.app still serves and is what Vercel calls the
@@ -221,6 +222,7 @@ Blob reads still work with the real token, so the dashboard shows real products.
 | 09-05 | `2df641c` | this handoff |
 | 09-07 | `bba493a` | og.jpg link-preview image, share title "panpangame - ซื้อขายรหัส Free Fire" (deployed via CLI — GitHub hook did not fire) |
 | 09-13 | `78089ec` | custom domain panpangame.com live (Cloudflare DNS → Vercel, www + http redirects), canonical URL switched |
+| 09-13 | `931802e` | DEMO badge + demo footer note removed — site is live for real |
 
 ## Open / ideas not started
 
