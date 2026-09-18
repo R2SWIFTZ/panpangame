@@ -1,6 +1,6 @@
 # panpangame — project handoff
 
-Updated 2026-09-13. Written for the next Claude session (or a human) picking this
+Updated 2026-09-18. Written for the next Claude session (or a human) picking this
 project up cold. Read this top to bottom before touching code.
 
 ## What it is
@@ -82,6 +82,8 @@ app/
   api/admin/upload                @vercel/blob client-upload token handler
 components/
   SiteHeader / SiteFooter / HomeHero / ProductGridHome / HowTo / ContactSection
+  CategoryChips  the "ทั้งหมด + categories" filter row — ONE component shared by
+                 ProductGridHome (storefront) and AdminDashboard, so they never drift
   Gallery (single/grid modes) · DetailActions (copy summary → LINE) · StatusBadge
   admin/AdminLogin · AdminDashboard · ProductRow · ProductForm · CategoryOrderPanel
 lib/
@@ -91,7 +93,10 @@ lib/
   validate.ts parseProductInput (limits below) + touchProduct (timestamps)
   auth.ts     HMAC session cookie
 scripts/seed.mjs   one-off: upload image folders + write initial products.json
-public/og.jpg      link-preview image (the pink shop poster, 1200x1200, ~220 KB)
+public/og.jpg      link-preview image — the Panda Zone artwork on white, 1200x1200,
+                   ~175 KB (replaced the pink poster on 2026-09-18)
+app/favicon.ico · app/icon.png (192) · app/apple-icon.png (180)
+                   same artwork, Next app-icon file conventions (auto <link> tags)
 ```
 
 ## Data model and storage
@@ -116,11 +121,14 @@ next request. Blob writes use `allowOverwrite + addRandomSuffix: false`.
 **Categories** (`lib/types.ts`, in code, not in the DB): `recommended`
 "รวมไอดีแนะนำ", `rare` "รวมไอดีของเทพแรร์", `budget` "รวมไอดีงบน้อนราคานักเรียน",
 `flag` "รวมไอดีปักธง โหดๆ", `thousand` "รวมไอดีหลักพันตึงๆ", `girl`
-"รวมไอดีเน้นหญิงสวยๆ". The public grid shows an "ทั้งหมด" chip first (not a
-category) then the chips in the admin-chosen order. To add a category: extend the
-union, `CATEGORY_LABEL`, `CATEGORY_ORDER` — the validator, admin select, and the
-saved order all derive from those (`normalizeCategoryOrder` appends new ids and
-drops unknown ones, so a stale `settings.json` never breaks).
+"รวมไอดีเน้นหญิงสวยๆ", `prime8` "ไอดี Prime 8" (added 2026-09-18 — note the label
+has no "รวม" prefix, that is what the operator asked for). The public grid shows an
+"ทั้งหมด" chip first (not a category) then the chips in the admin-chosen order. To
+add a category: extend the union, `CATEGORY_LABEL`, `CATEGORY_ORDER` — the
+validator, admin select, and the saved order all derive from those
+(`normalizeCategoryOrder` appends new ids and drops unknown ones, so a stale
+`settings.json` never breaks). A new category lands LAST in the chip row until the
+operator drags it into place in the admin panel — tell them that when adding one.
 
 ## Admin (`/admin`)
 
@@ -133,6 +141,20 @@ drops unknown ones, so a stale `settings.json` never breaks).
   ≡ grip (framer `Reorder`, grip-only drag listener, `touch-none` so iOS doesn't
   steal the gesture; release → one `PATCH /api/admin/products {order}`), and the
   **category-order panel** (same grip pattern; `PATCH /api/admin/categories`).
+- **Category filter chips** (2026-09-18) above the product list — the same
+  `CategoryChips` row as the storefront. Pick a category and the list shows only
+  its products, in the exact order a customer sees after tapping the same chip.
+  Dragging in a filtered view reorders **within that category only**: the moved
+  subset refills the slots the category already occupies in the full array
+  (`reorderShown` in AdminDashboard), other categories keep their positions, and
+  the PATCH still sends the full EP list. `reorderShown` skips a hover-swap whose
+  subset no longer matches the list (a delete resolving mid-drag) instead of
+  dropping a product. framer's `Reorder.Group` prunes its layout map against
+  `values` on every render, so switching the filter needs no remount. "＋
+  เพิ่มรหัสใหม่" while filtered preselects that category in the form
+  (`defaultCategory`). The
+  chip order state lives in AdminDashboard and `CategoryOrderPanel` is controlled
+  (`order`/`onOrderChange`), so the chips follow a panel drag immediately.
 - Both PATCH routes accept only an exact permutation of the current set (no
   drops, dupes, unknown ids) and return 409 "รีเฟรชหน้าแล้วลองใหม่" otherwise —
   protects against a stale tab.
@@ -202,6 +224,12 @@ Blob reads still work with the real token, so the dashboard shows real products.
   Messenger / Instagram cache previews for hours–days; to force a refresh share
   the URL with a throwaway query (`/?v=2`). To change the preview image,
   replace `public/og.jpg` (keep it square, ≤ ~300 KB) — nothing else to edit.
+  2026-09-18: swapped to the Panda Zone artwork; the icons were regenerated from
+  the same source with Pillow (trim near-white margins, pad to square on white).
+- **favicon.ico under Turbopack.** `next build` decodes `app/favicon.ico` and
+  rejects an ICO whose frames are PNG-compressed RGB ("Processing image failed
+  … The PNG is not in RGBA format!"). Save it from an RGBA image with
+  `bitmap_format="bmp"` (32-bit BMP frames, sizes 16/32/48) and it builds.
 - The operator once asked to change "games" → "game"; no such string exists
   anywhere (code, prod HTML, repo description, Vercel). Assume a stale chat
   preview unless they show where it appears.
@@ -223,6 +251,8 @@ Blob reads still work with the real token, so the dashboard shows real products.
 | 09-07 | `bba493a` | og.jpg link-preview image, share title "panpangame - ซื้อขายรหัส Free Fire" (deployed via CLI — GitHub hook did not fire) |
 | 09-13 | `78089ec` | custom domain panpangame.com live (Cloudflare DNS → Vercel, www + http redirects), canonical URL switched |
 | 09-13 | `931802e` | DEMO badge + demo footer note removed — site is live for real |
+| 09-18 | `da0c16a` | "ไอดี Prime 8" category; shared CategoryChips; admin category filter chips + in-category drag reorder |
+| 09-18 | `dbf5a27` | link-preview image + favicon/icon/apple-icon → Panda Zone artwork |
 
 ## Open / ideas not started
 
