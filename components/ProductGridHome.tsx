@@ -4,10 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { CATEGORY_LABEL, formatPrice, type Product, type ProductCategory } from "@/lib/types";
+import { formatPrice, type Product, type ProductCategory } from "@/lib/types";
+import CategoryChips, { type CategoryFilter } from "./CategoryChips";
 import StatusBadge from "./StatusBadge";
-
-type Filter = ProductCategory | "all";
 
 export default function ProductGridHome({
   products,
@@ -16,7 +15,7 @@ export default function ProductGridHome({
   products: Product[];
   categoryOrder: ProductCategory[];
 }) {
-  const [filter, setFilter] = useState<Filter>("all");
+  const [filter, setFilter] = useState<CategoryFilter>("all");
   const shown = filter === "all" ? products : products.filter((p) => p.category === filter);
 
   return (
@@ -28,23 +27,7 @@ export default function ProductGridHome({
           </h2>
           <p className="mt-1 text-sm text-muted">กดที่รหัสเพื่อดูรูปและรายละเอียดทั้งหมด</p>
         </div>
-        <div role="tablist" aria-label="กรองตามหมวด" className="flex flex-wrap gap-2">
-          {(["all", ...categoryOrder] as Filter[]).map((s) => (
-            <button
-              key={s}
-              role="tab"
-              aria-selected={filter === s}
-              onClick={() => setFilter(s)}
-              className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition ${
-                filter === s
-                  ? "border-pink bg-pink/15 text-pink-soft"
-                  : "border-line bg-surface text-muted hover:border-pink/40 hover:text-ink"
-              }`}
-            >
-              {s === "all" ? "ทั้งหมด" : CATEGORY_LABEL[s]}
-            </button>
-          ))}
-        </div>
+        <CategoryChips order={categoryOrder} value={filter} onChange={setFilter} />
       </div>
 
       {shown.length === 0 ? (

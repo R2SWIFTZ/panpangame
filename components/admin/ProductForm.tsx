@@ -7,16 +7,17 @@ import { CATEGORY_LABEL, CATEGORY_ORDER, STATUS_LABEL, STATUS_ORDER, type Produc
 
 type Props = {
   product: Product | null; // null = สร้างใหม่
+  defaultCategory?: ProductCategory; // สร้างใหม่จากหน้าที่กรองหมวดไว้ — เลือกหมวดนั้นให้ก่อน
   onClose: () => void;
   onSaved: (saved: Product, previousEp?: string) => void;
 };
 
-export default function ProductForm({ product, onClose, onSaved }: Props) {
+export default function ProductForm({ product, defaultCategory, onClose, onSaved }: Props) {
   const [ep, setEp] = useState(product?.ep ?? "EP");
   const [price, setPrice] = useState(product ? String(product.price) : "0");
   const [details, setDetails] = useState(product?.details.join("\n") ?? "");
   const [status, setStatus] = useState<ProductStatus>(product?.status ?? "available");
-  const [category, setCategory] = useState<ProductCategory>(product?.category ?? "recommended");
+  const [category, setCategory] = useState<ProductCategory>(product?.category ?? defaultCategory ?? "recommended");
   const [images, setImages] = useState<string[]>(product?.images ?? []);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);

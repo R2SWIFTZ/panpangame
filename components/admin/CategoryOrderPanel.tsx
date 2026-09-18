@@ -7,8 +7,14 @@ import { CATEGORY_LABEL, type ProductCategory } from "@/lib/types";
 // Drag-to-reorder for the public filter chips. Same grip pattern as the
 // product rows: one vertical list, drag from the ≡ only, persist on release.
 // "ทั้งหมด" is not a category — it is always rendered first on the site.
-export default function CategoryOrderPanel({ initialOrder }: { initialOrder: ProductCategory[] }) {
-  const [order, setOrder] = useState(initialOrder);
+// The order is owned by AdminDashboard so its own filter chips follow a drag.
+export default function CategoryOrderPanel({
+  order,
+  onOrderChange,
+}: {
+  order: ProductCategory[];
+  onOrderChange: (next: ProductCategory[]) => void;
+}) {
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
   const orderRef = useRef(order);
@@ -48,7 +54,7 @@ export default function CategoryOrderPanel({ initialOrder }: { initialOrder: Pro
       </div>
       {error && <p className="mt-3 rounded-xl border border-rose/40 bg-rose/10 px-3 py-2 text-sm font-semibold text-rose">{error}</p>}
 
-      <Reorder.Group axis="y" values={order} onReorder={setOrder} className="mt-3 space-y-2">
+      <Reorder.Group axis="y" values={order} onReorder={onOrderChange} className="mt-3 space-y-2">
         {order.map((c, i) => (
           <CategoryRow key={c} category={c} index={i} onDropped={persist} />
         ))}

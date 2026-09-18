@@ -1,6 +1,6 @@
 export type ProductStatus = "available" | "reserved" | "installment" | "sold";
 
-export type ProductCategory = "recommended" | "rare" | "budget" | "flag" | "thousand" | "girl";
+export type ProductCategory = "recommended" | "rare" | "budget" | "flag" | "thousand" | "girl" | "prime8";
 
 export type Product = {
   ep: string; // รหัสสินค้า เช่น "EP6431"
@@ -29,9 +29,10 @@ export const CATEGORY_LABEL: Record<ProductCategory, string> = {
   flag: "รวมไอดีปักธง โหดๆ",
   thousand: "รวมไอดีหลักพันตึงๆ",
   girl: "รวมไอดีเน้นหญิงสวยๆ",
+  prime8: "ไอดี Prime 8",
 };
 
-export const CATEGORY_ORDER: ProductCategory[] = ["recommended", "rare", "budget", "flag", "thousand", "girl"];
+export const CATEGORY_ORDER: ProductCategory[] = ["recommended", "rare", "budget", "flag", "thousand", "girl", "prime8"];
 
 export function formatPrice(price: number): string {
   return price > 0 ? price.toLocaleString("th-TH") + " บาท" : "สอบถามราคา";

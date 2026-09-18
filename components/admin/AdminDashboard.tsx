@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Reorder } from "framer-motion";
-import type { Product, ProductCategory, ProductStatus } from "@/lib/types";
+import { CATEGORY_LABEL, type Product, type ProductCategory, type ProductStatus } from "@/lib/types";
+import CategoryChips, { type CategoryFilter } from "@/components/CategoryChips";
 import ProductForm from "./ProductForm";
 import ProductRow from "./ProductRow";
 import CategoryOrderPanel from "./CategoryOrderPanel";
@@ -18,6 +19,11 @@ export default function AdminDashboard({
 }) {
   const router = useRouter();
   const [products, setProducts] = useState(initialProducts);
+  // Chip order is shared with the storefront. It lives here (not in the
+  // order panel) so the filter chips above the list follow a drag right away.
+  const [categoryOrder, setCategoryOrder] = useState(initialCategoryOrder);
+  // Same chips as the public grid: "ทั้งหมด" or one category at a time.
+  const [filter, setFilter] = useState<CategoryFilter>("all");
   // Latest order for the drag-end handler — Reorder fires onReorder on every
   // hover-swap, but we only persist once the grip is released.
   const orderRef = useRef(products);
@@ -27,6 +33,25 @@ export default function AdminDashboard({
   const [editing, setEditing] = useState<Product | "new" | null>(null);
   const [busyEp, setBusyEp] = useState<string | null>(null);
   const [error, setError] = useState("");
+
+  const shown = filter === "all" ? products : products.filter((p) => p.category === filter);
+
+  // Dragging inside a category: the dragged subset refills the slots that
+  // category already holds in the full list, so every other category keeps
+  // its place — and the result is exactly what a customer sees after tapping
+  // the same chip on the site. (With "ทั้งหมด" every product is in the subset,
+  // so this is a plain replacement.)
+  const reorderShown = (nextShown: Product[]) => {
+    setProducts((prev) => {
+      const moving = new Set(nextShown.map((p) => p.ep));
+      // A delete or save resolving mid-drag can make the subset disagree with
+      // the list; skip that hover-swap rather than drop or duplicate a product.
+      const slots = prev.filter((p) => moving.has(p.ep)).length;
+      if (moving.size !== nextShown.length || slots !== nextShown.length) return prev;
+      let i = 0;
+      return prev.map((p) => (moving.has(p.ep) ? nextShown[i++] : p));
+    });
+  };
 
   const logout = async () => {
     await fetch("/api/admin/logout", { method: "POST" });
@@ -106,18 +131,37 @@ export default function AdminDashboard({
 
       {error && <p className="mt-4 rounded-xl border border-rose/40 bg-rose/10 px-4 py-2 text-sm font-semibold text-rose">{error}</p>}
 
+      <div className="mt-6">
+        <CategoryChips order={categoryOrder} value={filter} onChange={setFilter} />
+      </div>
+
       <button
         onClick={() => setEditing("new")}
-        className="mt-6 w-full rounded-2xl border-2 border-dashed border-pink/40 bg-pink/5 py-4 font-bold text-pink transition hover:bg-pink/10"
+        className="mt-4 w-full rounded-2xl border-2 border-dashed border-pink/40 bg-pink/5 py-4 font-bold text-pink transition hover:bg-pink/10"
       >
         ＋ เพิ่มรหัสใหม่
+        {filter !== "all" && (
+          <span className="font-semibold text-pink-soft">
+            {" "}
+            ในหมวด <span className="whitespace-nowrap">{CATEGORY_LABEL[filter]}</span>
+          </span>
+        )}
       </button>
 
-      {products.length > 0 && (
-        <p className="mt-6 text-xs text-muted">ลากที่ขีดสามขีดเพื่อสลับลำดับ — ลำดับนี้คือลำดับที่แสดงบนหน้าเว็บ</p>
+      {shown.length > 0 && (
+        <p className="mt-6 text-xs text-muted">
+          {filter === "all" ? (
+            "ลากที่ขีดสามขีดเพื่อสลับลำดับ — ลำดับนี้คือลำดับที่แสดงบนหน้าเว็บ"
+          ) : (
+            <>
+              หมวด <span className="whitespace-nowrap">{CATEGORY_LABEL[filter]}</span> มี {shown.length} รายการ —
+              ลากที่ขีดสามขีดเพื่อสลับลำดับภายในหมวดนี้ ตรงกับหน้าเว็บตอนลูกค้ากดหมวดเดียวกัน
+            </>
+          )}
+        </p>
       )}
-      <Reorder.Group axis="y" values={products} onReorder={setProducts} className="mt-3 space-y-3">
-        {products.map((p) => (
+      <Reorder.Group axis="y" values={shown} onReorder={reorderShown} className="mt-3 space-y-3">
+        {shown.map((p) => (
           <ProductRow
             key={p.ep}
             product={p}
@@ -129,13 +173,20 @@ export default function AdminDashboard({
           />
         ))}
       </Reorder.Group>
-      {products.length === 0 && <p className="py-10 text-center text-muted">ยังไม่มีรหัส กด &ldquo;เพิ่มรหัสใหม่&rdquo; ได้เลย</p>}
+      {shown.length === 0 && (
+        <p className="py-10 text-center text-muted">
+          {filter === "all"
+            ? "ยังไม่มีรหัส กด “เพิ่มรหัสใหม่” ได้เลย"
+            : "ยังไม่มีรหัสในหมวดนี้ — กด “เพิ่มรหัสใหม่” แล้วฟอร์มจะเลือกหมวดนี้ให้เลย"}
+        </p>
+      )}
 
-      <CategoryOrderPanel initialOrder={initialCategoryOrder} />
+      <CategoryOrderPanel order={categoryOrder} onOrderChange={setCategoryOrder} />
 
       {editing && (
         <ProductForm
           product={editing === "new" ? null : editing}
+          defaultCategory={filter === "all" ? undefined : filter}
           onClose={() => setEditing(null)}
           onSaved={onSaved}
         />
