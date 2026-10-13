@@ -24,6 +24,11 @@ export default function AdminDashboard({
   const [categoryOrder, setCategoryOrder] = useState(initialCategoryOrder);
   // Same chips as the public grid: "ทั้งหมด" or one category at a time.
   const [filter, setFilter] = useState<CategoryFilter>("all");
+  // EP search. Same normalisation the validator applies to EPs (upper-case,
+  // no whitespace), so "ep 64" finds EP6431. Filters live while typing; the
+  // button gives a phone keyboard a "search" target and nothing else.
+  const [query, setQuery] = useState("");
+  const epQuery = query.toUpperCase().replace(/\s+/g, "");
   // Latest order for the drag-end handler — Reorder fires onReorder on every
   // hover-swap, but we only persist once the grip is released.
   const orderRef = useRef(products);
@@ -34,7 +39,7 @@ export default function AdminDashboard({
   const [busyEp, setBusyEp] = useState<string | null>(null);
   const [error, setError] = useState("");
 
-  const shown = filter === "all" ? products : products.filter((p) => p.category === filter);
+  const shown = products.filter((p) => (filter === "all" || p.category === filter) && (epQuery === "" || p.ep.includes(epQuery)));
 
   // Dragging inside a category: the dragged subset refills the slots that
   // category already holds in the full list, so every other category keeps
@@ -131,7 +136,32 @@ export default function AdminDashboard({
 
       {error && <p className="mt-4 rounded-xl border border-rose/40 bg-rose/10 px-4 py-2 text-sm font-semibold text-rose">{error}</p>}
 
-      <div className="mt-6">
+      <form role="search" onSubmit={(e) => e.preventDefault()} className="mt-6 flex gap-2">
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="ค้นหารหัส EP เช่น EP6431"
+          aria-label="ค้นหารหัส EP"
+          autoComplete="off"
+          enterKeyHint="search"
+          className="h-11 min-w-0 flex-1 rounded-xl border border-line bg-surface px-4 text-sm outline-none focus:border-pink"
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            className="h-11 rounded-xl border border-line bg-surface px-4 text-sm font-semibold text-muted hover:text-ink"
+          >
+            ล้าง
+          </button>
+        )}
+        <button type="submit" className="h-11 rounded-xl bg-pink px-5 text-sm font-bold text-white transition hover:bg-pink-strong">
+          ค้นหา
+        </button>
+      </form>
+
+      <div className="mt-4">
         <CategoryChips order={categoryOrder} value={filter} onChange={setFilter} />
       </div>
 
@@ -150,7 +180,9 @@ export default function AdminDashboard({
 
       {shown.length > 0 && (
         <p className="mt-6 text-xs text-muted">
-          {filter === "all" ? (
+          {epQuery !== "" ? (
+            <>พบ {shown.length} รายการที่มี &ldquo;{epQuery}&rdquo; ในรหัส</>
+          ) : filter === "all" ? (
             "ลากที่ขีดสามขีดเพื่อสลับลำดับ — ลำดับนี้คือลำดับที่แสดงบนหน้าเว็บ"
           ) : (
             <>
@@ -175,7 +207,9 @@ export default function AdminDashboard({
       </Reorder.Group>
       {shown.length === 0 && (
         <p className="py-10 text-center text-muted">
-          {filter === "all"
+          {epQuery !== ""
+            ? `ไม่พบรหัสที่มี “${epQuery}”`
+            : filter === "all"
             ? "ยังไม่มีรหัส กด “เพิ่มรหัสใหม่” ได้เลย"
             : "ยังไม่มีรหัสในหมวดนี้ — กด “เพิ่มรหัสใหม่” แล้วฟอร์มจะเลือกหมวดนี้ให้เลย"}
         </p>

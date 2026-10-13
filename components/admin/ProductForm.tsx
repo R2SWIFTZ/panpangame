@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { upload } from "@vercel/blob/client";
-import { CATEGORY_LABEL, CATEGORY_ORDER, STATUS_LABEL, STATUS_ORDER, type Product, type ProductCategory, type ProductStatus } from "@/lib/types";
+import { CATEGORY_LABEL, CATEGORY_ORDER, INSTALLMENT_LABEL, STATUS_LABEL, STATUS_ORDER, type Product, type ProductCategory, type ProductStatus } from "@/lib/types";
 
 type Props = {
   product: Product | null; // null = สร้างใหม่
@@ -15,6 +15,7 @@ type Props = {
 export default function ProductForm({ product, defaultCategory, onClose, onSaved }: Props) {
   const [ep, setEp] = useState(product?.ep ?? "EP");
   const [price, setPrice] = useState(product ? String(product.price) : "0");
+  const [installmentPrice, setInstallmentPrice] = useState(product ? String(product.installmentPrice) : "0");
   const [details, setDetails] = useState(product?.details.join("\n") ?? "");
   const [status, setStatus] = useState<ProductStatus>(product?.status ?? "available");
   const [category, setCategory] = useState<ProductCategory>(product?.category ?? defaultCategory ?? "recommended");
@@ -51,6 +52,7 @@ export default function ProductForm({ product, defaultCategory, onClose, onSaved
     const payload = {
       ep,
       price: Number(price) || 0,
+      installmentPrice: Number(installmentPrice) || 0,
       details: details.split("\n").map((d) => d.trim()).filter(Boolean),
       images,
       status,
@@ -112,6 +114,17 @@ export default function ProductForm({ product, defaultCategory, onClose, onSaved
             />
           </label>
         </div>
+
+        <label className="mt-4 block">
+          <span className="text-sm font-semibold">{INSTALLMENT_LABEL} (บาท) — ใส่ 0 = ไม่แสดง</span>
+          <input
+            type="number"
+            min={0}
+            value={installmentPrice}
+            onChange={(e) => setInstallmentPrice(e.target.value)}
+            className="mt-1 w-full rounded-xl border border-line bg-surface px-4 py-2.5 outline-none focus:border-pink"
+          />
+        </label>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="block">

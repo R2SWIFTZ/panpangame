@@ -1,6 +1,6 @@
 # panpangame — project handoff
 
-Updated 2026-09-18. Written for the next Claude session (or a human) picking this
+Updated 2026-10-13. Written for the next Claude session (or a human) picking this
 project up cold. Read this top to bottom before touching code.
 
 ## What it is
@@ -110,9 +110,15 @@ There is **no database**. Everything is JSON in Vercel Blob:
 | `ids/<EP>/<filename>`  | product images (jpeg/png/webp/gif)     | admin form via client upload |
 
 `Product`: `ep` (e.g. "EP6431", upper-cased, whitespace stripped, unique key),
-`price` (0 = "สอบถามราคา"), `details: string[]`, `images: string[]`, `status`
-(`available | reserved | installment | sold`), `category`, `createdAt/updatedAt`.
-Validation limits: 30 details × 200 chars, 30 images, price 0–10,000,000.
+`price` (0 = "สอบถามราคา"), `installmentPrice` ("ราคาเปิดผ่อนเล่น", 0 = not
+offered → hidden everywhere; added 2026-10-13, `readProducts` defaults missing
+values to 0 so old rows never surface `undefined`), `details: string[]`,
+`images: string[]`, `status` (`available | reserved | installment | sold`),
+`category`, `createdAt/updatedAt`. Validation limits: 30 details × 200 chars,
+30 images, price and installmentPrice 0–10,000,000 (installmentPrice may be
+omitted → 0). The label lives once in `INSTALLMENT_LABEL` (`lib/types.ts`);
+customer-side it shows under the main price on the grid card, the detail page,
+and in the copied LINE summary — only when > 0.
 
 Reads bypass the blob edge cache (`?v=Date.now()` + `cache: "no-store"`), both
 pages are `force-dynamic`, so an admin change shows on the public site on the
@@ -136,8 +142,15 @@ operator drags it into place in the admin panel — tell them that when adding o
   cookie = HMAC-SHA256(`SESSION_SECRET`, "panpangame-admin"), httpOnly, secure
   in prod, 7 days. `isAdminRequest()` guards the page and every `/api/admin/*`
   route; unauthenticated calls get 401.
+- **EP search** (2026-10-13) above the category chips: live filter on the EP
+  string, normalised like the validator (upper-case, whitespace stripped) so
+  "ep 64" matches EP6431; combines with the category chip. The "ค้นหา" button
+  only submits the form (prevented) — it exists so phone keyboards get a
+  search key; "ล้าง" clears. Dragging while a search is active reorders the
+  matched subset within its existing slots (same `reorderShown` path as a
+  category filter).
 - Dashboard: add/edit/delete products (modal form with client-side image upload
-  straight to Blob), inline status select, **drag-to-reorder products** from the
+  straight to Blob, incl. the "ราคาเปิดผ่อนเล่น" field), inline status select, **drag-to-reorder products** from the
   ≡ grip (framer `Reorder`, grip-only drag listener, `touch-none` so iOS doesn't
   steal the gesture; release → one `PATCH /api/admin/products {order}`), and the
   **category-order panel** (same grip pattern; `PATCH /api/admin/categories`).
@@ -253,6 +266,7 @@ Blob reads still work with the real token, so the dashboard shows real products.
 | 09-13 | `931802e` | DEMO badge + demo footer note removed — site is live for real |
 | 09-18 | `da0c16a` | "ไอดี Prime 8" category; shared CategoryChips; admin category filter chips + in-category drag reorder |
 | 09-18 | `dbf5a27` | link-preview image + favicon/icon/apple-icon → Panda Zone artwork |
+| 10-13 | — | admin EP search; "ราคาเปิดผ่อนเล่น" second price (admin form/row, storefront card, detail page, LINE summary) |
 
 ## Open / ideas not started
 

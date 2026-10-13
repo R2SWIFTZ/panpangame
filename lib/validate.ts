@@ -7,6 +7,7 @@ const MAX_TEXT_LEN = 200;
 export type ProductInput = {
   ep: string;
   price: number;
+  installmentPrice: number;
   details: string[];
   images: string[];
   status: ProductStatus;
@@ -22,6 +23,11 @@ export function parseProductInput(body: unknown): ProductInput | string {
 
   const price = Number(b.price);
   if (!Number.isFinite(price) || price < 0 || price > 10_000_000) return "ราคาไม่ถูกต้อง";
+
+  // Optional — older clients/data omit it, which means "not offered" (0).
+  const rawInstallment = b.installmentPrice;
+  const installmentPrice = rawInstallment === undefined || rawInstallment === null || rawInstallment === "" ? 0 : Number(rawInstallment);
+  if (!Number.isFinite(installmentPrice) || installmentPrice < 0 || installmentPrice > 10_000_000) return "ราคาเปิดผ่อนเล่นไม่ถูกต้อง";
 
   const details = Array.isArray(b.details)
     ? b.details
@@ -43,7 +49,7 @@ export function parseProductInput(body: unknown): ProductInput | string {
     ? (b.category as ProductCategory)
     : "recommended";
 
-  return { ep, price: Math.round(price), details, images, status, category };
+  return { ep, price: Math.round(price), installmentPrice: Math.round(installmentPrice), details, images, status, category };
 }
 
 export function touchProduct(input: ProductInput, existing?: Product): Product {

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Reorder, useDragControls } from "framer-motion";
-import { CATEGORY_LABEL, formatPrice, STATUS_LABEL, STATUS_ORDER, type Product, type ProductStatus } from "@/lib/types";
+import { CATEGORY_LABEL, formatInstallmentPrice, formatPrice, INSTALLMENT_LABEL, STATUS_LABEL, STATUS_ORDER, type Product, type ProductStatus } from "@/lib/types";
 import StatusBadge from "@/components/StatusBadge";
 
 type Props = {
@@ -57,6 +57,12 @@ export default function ProductRow({ product: p, busy, onStatus, onEdit, onRemov
               <span className="text-muted"> · </span>
               <span className="inline-block text-muted">{CATEGORY_LABEL[p.category]}</span>
             </p>
+            {p.installmentPrice > 0 && (
+              <p className="text-sm text-sky">
+                <span className="whitespace-nowrap">{INSTALLMENT_LABEL}</span>{" "}
+                <span className="whitespace-nowrap font-semibold">{formatInstallmentPrice(p.installmentPrice)}</span>
+              </p>
+            )}
             <p className="text-xs text-muted">
               {p.images.length} รูป · {p.details.length} รายละเอียด
             </p>

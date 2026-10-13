@@ -14,7 +14,9 @@ export async function readProducts(): Promise<Product[]> {
     if (!res.ok) return [];
     const data = (await res.json()) as Product[];
     if (!Array.isArray(data)) return [];
-    return data.map((p) => ({ ...p, category: p.category ?? "recommended" }));
+    // Products saved before a field existed get its default here, so the rest
+    // of the app never sees undefined.
+    return data.map((p) => ({ ...p, category: p.category ?? "recommended", installmentPrice: p.installmentPrice ?? 0 }));
   } catch {
     // ยังไม่มีไฟล์ข้อมูล (ร้านใหม่) — เริ่มจากรายการว่าง
     return [];

@@ -6,7 +6,7 @@ import Gallery from "@/components/Gallery";
 import DetailActions from "@/components/DetailActions";
 import StatusBadge from "@/components/StatusBadge";
 import { readProducts } from "@/lib/store";
-import { formatPrice } from "@/lib/types";
+import { formatInstallmentPrice, formatPrice, INSTALLMENT_LABEL } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -36,7 +36,15 @@ export default async function ProductDetailPage({ params }: PageProps<"/id/[ep]"
 
         <div className="mt-6 flex flex-wrap items-end justify-between gap-3">
           <h1 className="text-3xl font-bold tracking-wide sm:text-4xl">{product.ep}</h1>
-          <p className="text-2xl font-bold text-pink sm:text-3xl">{formatPrice(product.price)}</p>
+          <div className="text-right">
+            <p className="text-2xl font-bold text-pink sm:text-3xl">{formatPrice(product.price)}</p>
+            {product.installmentPrice > 0 && (
+              <p className="mt-1 text-sm font-semibold text-sky">
+                <span className="whitespace-nowrap">{INSTALLMENT_LABEL}</span>{" "}
+                <span className="whitespace-nowrap">{formatInstallmentPrice(product.installmentPrice)}</span>
+              </p>
+            )}
+          </div>
         </div>
 
         <section aria-label="รายละเอียดสินค้า" className="mt-5 rounded-2xl border border-line bg-card p-5">

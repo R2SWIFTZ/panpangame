@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { formatPrice, type Product, type ProductCategory } from "@/lib/types";
+import { formatInstallmentPrice, formatPrice, INSTALLMENT_LABEL, type Product, type ProductCategory } from "@/lib/types";
 import CategoryChips, { type CategoryFilter } from "./CategoryChips";
 import StatusBadge from "./StatusBadge";
 
@@ -76,9 +76,15 @@ export default function ProductGridHome({
                         <p className="text-lg font-bold tracking-wide">{p.ep}</p>
                         <p className="truncate text-sm text-muted">{p.details[0] ?? "ดูรายละเอียดด้านใน"}</p>
                       </div>
-                      <p className={`shrink-0 text-lg font-bold ${p.price > 0 ? "text-pink" : "text-pink-soft"}`}>
-                        {formatPrice(p.price)}
-                      </p>
+                      <div className="shrink-0 text-right">
+                        <p className={`text-lg font-bold ${p.price > 0 ? "text-pink" : "text-pink-soft"}`}>{formatPrice(p.price)}</p>
+                        {p.installmentPrice > 0 && (
+                          <p className="text-xs font-semibold text-sky">
+                            <span className="whitespace-nowrap">{INSTALLMENT_LABEL}</span>{" "}
+                            <span className="whitespace-nowrap">{formatInstallmentPrice(p.installmentPrice)}</span>
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </Link>
                 </motion.div>

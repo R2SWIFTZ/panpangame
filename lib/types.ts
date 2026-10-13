@@ -5,6 +5,7 @@ export type ProductCategory = "recommended" | "rare" | "budget" | "flag" | "thou
 export type Product = {
   ep: string; // รหัสสินค้า เช่น "EP6431"
   price: number; // 0 = สอบถามราคา
+  installmentPrice: number; // ราคาเปิดผ่อนเล่น — 0 = ไม่แสดง
   details: string[];
   images: string[];
   status: ProductStatus;
@@ -36,4 +37,11 @@ export const CATEGORY_ORDER: ProductCategory[] = ["recommended", "rare", "budget
 
 export function formatPrice(price: number): string {
   return price > 0 ? price.toLocaleString("th-TH") + " บาท" : "สอบถามราคา";
+}
+
+export const INSTALLMENT_LABEL = "ราคาเปิดผ่อนเล่น";
+
+// Optional second price. Shown only when set (> 0), so 0 is "not offered".
+export function formatInstallmentPrice(price: number): string {
+  return price.toLocaleString("th-TH") + " บาท";
 }

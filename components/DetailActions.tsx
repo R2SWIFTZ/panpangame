@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { siteConfig } from "@/lib/config";
-import { formatPrice, STATUS_LABEL, type Product } from "@/lib/types";
+import { formatInstallmentPrice, formatPrice, INSTALLMENT_LABEL, STATUS_LABEL, type Product } from "@/lib/types";
 
 export default function DetailActions({ product }: { product: Product }) {
   const [showModal, setShowModal] = useState(false);
@@ -13,6 +13,7 @@ export default function DetailActions({ product }: { product: Product }) {
   const summary = [
     `สนใจรหัส ${product.ep} ครับ/ค่ะ`,
     `ราคา: ${formatPrice(product.price)}`,
+    ...(product.installmentPrice > 0 ? [`${INSTALLMENT_LABEL}: ${formatInstallmentPrice(product.installmentPrice)}`] : []),
     `สถานะ: ${STATUS_LABEL[product.status]}`,
     ...product.details.map((d) => `- ${d}`),
   ].join("\n");
