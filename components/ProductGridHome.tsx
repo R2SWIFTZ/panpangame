@@ -33,7 +33,7 @@ export default function ProductGridHome({
       {shown.length === 0 ? (
         <p className="mt-14 text-center text-muted">ยังไม่มีรหัสในหมวดนี้ — ทัก LINE สอบถามได้เลย</p>
       ) : (
-        <motion.div layout className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div layout className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">
             {shown.map((p) => {
               const sold = p.status === "sold";
@@ -58,26 +58,26 @@ export default function ProductGridHome({
                           src={p.images[0]}
                           alt={`รูปตัวอย่างรหัส ${p.ep}`}
                           fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          sizes="(max-width: 1024px) 50vw, 33vw"
                           className={`object-cover transition duration-300 group-hover:scale-105 ${sold ? "grayscale" : ""}`}
                         />
                       ) : (
                         <div className="grid h-full place-items-center text-5xl">🔥</div>
                       )}
-                      <StatusBadge status={p.status} className="absolute left-3 top-3 backdrop-blur-sm" />
+                      <StatusBadge status={p.status} className="absolute left-2 top-2 backdrop-blur-sm sm:left-3 sm:top-3" />
                       {p.images.length > 1 && (
-                        <span className="absolute bottom-3 right-3 rounded-full bg-black/60 px-2.5 py-0.5 text-xs font-semibold text-white backdrop-blur-sm">
+                        <span className="absolute bottom-2 right-2 rounded-full sm:bottom-3 sm:right-3 bg-black/60 px-2.5 py-0.5 text-xs font-semibold text-white backdrop-blur-sm">
                           🖼️ {p.images.length} รูป
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center justify-between gap-3 p-4">
+                    <div className="flex flex-col gap-1 p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:p-4">
                       <div className="min-w-0">
-                        <p className="text-lg font-bold tracking-wide">{p.ep}</p>
+                        <p className="text-base font-bold tracking-wide sm:text-lg">{p.ep}</p>
                         <p className="truncate text-sm text-muted">{p.details[0] ?? "ดูรายละเอียดด้านใน"}</p>
                       </div>
-                      <div className="shrink-0 text-right">
-                        <p className={`text-lg font-bold ${p.price > 0 ? "text-pink" : "text-pink-soft"}`}>{formatPrice(p.price)}</p>
+                      <div className="shrink-0 sm:text-right">
+                        <p className={`text-base font-bold sm:text-lg ${p.price > 0 ? "text-pink" : "text-pink-soft"}`}>{formatPrice(p.price)}</p>
                         {p.installmentPrice > 0 && (
                           <p className="text-xs font-semibold text-sky">
                             <span className="whitespace-nowrap">{INSTALLMENT_LABEL}</span>{" "}
