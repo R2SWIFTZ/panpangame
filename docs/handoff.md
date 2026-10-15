@@ -1,6 +1,6 @@
 # panpangame — project handoff
 
-Updated 2026-10-13. Written for the next Claude session (or a human) picking this
+Updated 2026-10-15. Written for the next Claude session (or a human) picking this
 project up cold. Read this top to bottom before touching code.
 
 ## What it is
@@ -215,8 +215,12 @@ Blob reads still work with the real token, so the dashboard shows real products.
 - **Grid auto-track overflow ("รูปอ้วน").** The product grid had no explicit
   column on phones, so a long `details[0]` (nowrap/truncate) sized the auto
   track to the text; the card grew to 478 px on a 390 px screen and the square
-  image grew with it. Fix: `grid-cols-1` (= `minmax(0,1fr)`) + `min-w-0` on the
-  items. Any new grid of cards needs the same.
+  image grew with it. Fix: an explicit `grid-cols-N` (= `minmax(0,1fr)`) +
+  `min-w-0` on the items. Any new grid of cards needs the same. Since
+  2026-10-15 the home grid is `grid-cols-2` on phones (two cards per row, as
+  the operator asked, matching competitor shops) and `lg:grid-cols-3`; the card
+  footer stacks EP/details above the price below `sm` so both fit at half
+  width.
 - **`whitespace-nowrap` on long labels** breaks mobile (copied from a one-word
   label onto a sentence once, in the sibling applesupps project) — only use it
   on phrase-length spans inside a wrapping parent.
@@ -266,7 +270,8 @@ Blob reads still work with the real token, so the dashboard shows real products.
 | 09-13 | `931802e` | DEMO badge + demo footer note removed — site is live for real |
 | 09-18 | `da0c16a` | "ไอดี Prime 8" category; shared CategoryChips; admin category filter chips + in-category drag reorder |
 | 09-18 | `dbf5a27` | link-preview image + favicon/icon/apple-icon → Panda Zone artwork |
-| 10-13 | — | admin EP search; "ราคาเปิดผ่อนเล่น" second price (admin form/row, storefront card, detail page, LINE summary) |
+| 10-13 | `97aabe9` | admin EP search; "ราคาเปิดผ่อนเล่น" second price (admin form/row, storefront card, detail page, LINE summary) |
+| 10-15 | `93ab459` | home grid two cards per row on phones; card footer stacks on small screens |
 
 ## Open / ideas not started
 
